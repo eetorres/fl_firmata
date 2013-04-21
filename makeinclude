@@ -1,0 +1,22 @@
+# Edmanuel Torres 2013
+
+CXX = g++
+
+PROG = fl_firmata_test
+SCRS = $(PROG).cxx fl_firmata.cxx Fl_Pin_Table.cxx CFirmata.cxx serial.cxx
+OBJS = $(SCRS:.cxx=.o)
+
+MDIR = $(shell sh -c pwd)
+
+OPTIM  = -O2 -Wall -Wno-deprecated
+LMATH = -lm
+LX11R = -L -lGLU -lGL -lXft -lXinerama -lX11 -lXext
+LFLTK = -lfltk -lfltk_gl
+
+CFLAGS = $(OPTIM) -c
+LFLAGS = $(OPTIM) $(LFLTK) $(LX11R)
+
+.SUFFIXES:	.cxx .o .h
+
+.cxx.o:
+	$(CXX) $(CFLAGS) $< -o $@

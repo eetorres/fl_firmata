@@ -1,0 +1,172 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0302 
+header_name {.h} 
+code_name {.cxx}
+decl {\#include "Fl_Pin_Table.h"} {public global
+} 
+
+decl {std::string str_var;} {private local
+} 
+
+class help_xmol {open
+} {
+  Function {help_xmol()} {open
+  } {
+    Fl_Window help_win {
+      label {About XMolView} open
+      xywh {2503 737 375 175} type Double selection_color 49
+      code3 {o->resizable(NULL);} modal visible
+    } {
+      Fl_Box {} {
+        label {FL_Firmata (0.1) is based on the FLTK library. Feel free to use FL_Firmata code under the trems of the GPL licence.
+Copyright 2013 by Edmanuel Torres
+eetorres@@gmail.com}
+        xywh {11 15 355 86} color 55 selection_color 55 align 176
+      }
+      Fl_Box {} {
+        label {Get FLTK from www.fltk.org.}
+        xywh {75 138 212 22} selection_color 49 align 149
+      }
+      Fl_Output web {
+        xywh {25 103 333 25} box NO_BOX color 47 selection_color 47 align 0
+        code0 {web->value("https://github.com/eetorres");}
+      }
+      Fl_Button {} {
+        label {&Close}
+        callback {//
+  help_win->hide();}
+        xywh {295 132 70 28} box GLEAM_UP_BOX color 41 selection_color 41 labelcolor 57
+      }
+    }
+  }
+  Function {show()} {open
+  } {
+    code {//
+  //create_mol->position(5,102);
+  help_win->show();} {}
+  }
+} 
+
+class fl_firmata {open
+} {
+  Function {fl_firmata()} {open
+  } {
+    Fl_Window firmata_win {
+      label FL_Firmata_Test open
+      xywh {3119 53 645 825} type Double box GLEAM_THIN_UP_BOX color 48 selection_color 48 resizable visible
+    } {
+      Fl_Group {} {open
+        xywh {10 57 600 741} box BORDER_BOX selection_color 49 resizable
+      } {
+        Fl_Box pin_table {
+          xywh {14 60 581 732} color 48 selection_color 48
+          class Fl_Pin_Table
+        }
+      }
+      Fl_Group {} {open
+        xywh {0 -2 612 45} selection_color 49
+      } {
+        Fl_Button connect {
+          label Connect
+          callback {//
+pin_table->send_open_port();
+str_var = pin_table->get_status();
+status_bar->copy_label((char*)str_var.c_str());
+if(pin_table->is_port_open()){
+  Fl::add_idle(on_idle_window,(void*)this);
+  port_choice->deactivate();
+  discon->activate();
+  connect->deactivate();
+}} selected
+          xywh {12 13 62 20} box GLEAM_UP_BOX color 48 selection_color 48 labelfont 4
+        }
+        Fl_Button discon {
+          label Disconnect
+          callback {//
+pin_table->send_close_port();
+str_var = pin_table->get_status();
+status_bar->copy_label((char*)str_var.c_str());
+Fl::remove_idle(on_idle_window,(void*)this);
+port_choice->activate();
+discon->deactivate();
+connect->activate();}
+          xywh {75 13 86 20} box GLEAM_UP_BOX color 48 selection_color 48 deactivate
+        }
+        Fl_Button {} {
+          label Quit
+          callback {//
+pin_table->send_close_port();
+Fl::remove_idle(on_idle_window,(void*)this);
+quit();}
+          xywh {480 13 65 20} box GLEAM_UP_BOX color 48 selection_color 48 labelfont 4
+        }
+        Fl_Button {} {
+          label About
+          callback {//
+help_xmol * about = new help_xmol();
+about->show();}
+          xywh {547 13 65 20} box GLEAM_UP_BOX color 48 selection_color 48 labelfont 4
+        }
+        Fl_Choice port_choice {
+          label {Serial Port}
+          callback {//
+pin_table->set_port_name((int)port_choice->value());} open
+          xywh {243 13 140 20} box GLEAM_DOWN_BOX down_box BORDER_BOX color 18 selection_color 46
+        } {}
+        Fl_Box {} {
+          xywh {430 5 10 35} selection_color 49 resizable
+        }
+      }
+      Fl_Box status_bar {
+        xywh {9 800 425 20} selection_color 49
+        code0 {o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);}
+      }
+    }
+    code {//
+int num;
+bool any=false;
+
+
+str_var = pin_table->get_status();
+status_bar->copy_label((char*)str_var.c_str());
+
+std::vector<std::string> list = pin_table->get_port_list();
+num = list.size();
+for (int i=0; i < num; i++) {
+    //printf("%d: port %s\\n", i, (const char *)list[i].c_str());
+    port_choice->add((const char *)list[i].c_str());
+    str_var = pin_table->get_port_name();
+    if (pin_table->is_port_open() && !strcmp(str_var.c_str(),list[i].c_str())) {
+      port_choice->value(i);
+      any = true;
+    }
+}
+if(!any){
+ port_choice->value(0);
+ pin_table->set_port_name((int)port_choice->value());
+}} {}
+  }
+  Function {show()} {open
+  } {
+    code {//
+  firmata_win->show();} {}
+  }
+  Function {quit()} {open
+  } {
+    code {//
+  firmata_win->hide();} {}
+  }
+  Function {add_pin(int pin, pin_t pint)} {open
+  } {
+    code {//printf("pin %i added!\\n",pin);
+pin_table->add_pin(pin,pint);} {}
+  }
+  Function {on_idle_window(void *userdata)} {open return_type {static void}
+  } {
+    code {std::string s;
+fl_firmata *o = (fl_firmata*)userdata;
+o->pin_table->get_next_data();
+s =o->pin_table->get_status();
+o->status_bar->copy_label((char*)s.c_str());} {}
+  }
+} 
