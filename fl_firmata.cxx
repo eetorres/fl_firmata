@@ -3,16 +3,16 @@
 #include "fl_firmata.h"
 static std::string str_var; 
 
-void help_xmol::cb_Close_i(Fl_Button*, void*) {
+void help_about::cb_Close_i(Fl_Button*, void*) {
   //
   help_win->hide();
 }
-void help_xmol::cb_Close(Fl_Button* o, void* v) {
-  ((help_xmol*)(o->parent()->user_data()))->cb_Close_i(o,v);
+void help_about::cb_Close(Fl_Button* o, void* v) {
+  ((help_about*)(o->parent()->user_data()))->cb_Close_i(o,v);
 }
 
-help_xmol::help_xmol() {
-  { Fl_Double_Window* o = help_win = new Fl_Double_Window(375, 175, "About XMolView");
+help_about::help_about() {
+  { Fl_Double_Window* o = help_win = new Fl_Double_Window(375, 175, "About Fl_Firmata");
     help_win->user_data((void*)(this));
     { Fl_Box* o = new Fl_Box(11, 15, 355, 86, "FL_Firmata (0.1) is based on the FLTK library. Feel free to use FL_Firmata co\
 de under the trems of the GPL licence.\nCopyright 2013 by Edmanuel Torres\neet\
@@ -44,9 +44,8 @@ orres@@gmail.com");
   } // Fl_Double_Window* help_win
 }
 
-void help_xmol::show() {
+void help_about::show() {
   //
-    //create_mol->position(5,102);
     help_win->show();
 }
 
@@ -92,7 +91,7 @@ void fl_firmata::cb_Quit(Fl_Button* o, void* v) {
 
 void fl_firmata::cb_About_i(Fl_Button*, void*) {
   //
-help_xmol * about = new help_xmol();
+help_about * about = new help_about();
 about->show();
 }
 void fl_firmata::cb_About(Fl_Button* o, void* v) {

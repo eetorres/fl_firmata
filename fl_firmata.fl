@@ -8,12 +8,12 @@ decl {\#include "Fl_Pin_Table.h"} {public global
 decl {std::string str_var;} {private local
 } 
 
-class help_xmol {open
+class help_about {open
 } {
-  Function {help_xmol()} {open
+  Function {help_about()} {open
   } {
     Fl_Window help_win {
-      label {About XMolView} open
+      label {About Fl_Firmata} open
       xywh {2503 737 375 175} type Double selection_color 49
       code3 {o->resizable(NULL);} modal visible
     } {
@@ -42,7 +42,6 @@ eetorres@@gmail.com}
   Function {show()} {open
   } {
     code {//
-  //create_mol->position(5,102);
   help_win->show();} {}
   }
 } 
@@ -77,7 +76,7 @@ if(pin_table->is_port_open()){
   port_choice->deactivate();
   discon->activate();
   connect->deactivate();
-}} selected
+}}
           xywh {12 13 62 20} box GLEAM_UP_BOX color 48 selection_color 48 labelfont 4
         }
         Fl_Button discon {
@@ -103,8 +102,8 @@ quit();}
         Fl_Button {} {
           label About
           callback {//
-help_xmol * about = new help_xmol();
-about->show();}
+help_about * about = new help_about();
+about->show();} selected
           xywh {547 13 65 20} box GLEAM_UP_BOX color 48 selection_color 48 labelfont 4
         }
         Fl_Choice port_choice {

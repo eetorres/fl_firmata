@@ -3,7 +3,7 @@
  *
  *  this is a  port of the Firmata Test Program by
  *  Paul Stoffregen (paul@pjrc.com) to the FLTK GUI.
- *  http://www.pjrc.com/teensy/firmata_test/
+ *  https://github.com/firmata/firmata_test.git
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by

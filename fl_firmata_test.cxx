@@ -2,10 +2,6 @@
  *  Copyright 2013, Edmanuel Torres (eetorres@gmail.com)
  *  get the latest version from https://github.com/eetorres
  *
- *  this program is a port of the Firmata Test Program by
- *  Paul Stoffregen (paul@pjrc.com) to the FLTK GUI.
- *  http://www.pjrc.com/teensy/firmata_test/
- *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation, either version 3 of the License, or

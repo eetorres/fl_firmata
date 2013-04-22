@@ -9,9 +9,9 @@
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Button.H>
 
-class help_xmol {
+class help_about {
 public:
-  help_xmol();
+  help_about();
   Fl_Double_Window *help_win;
   Fl_Output *web;
 private:
