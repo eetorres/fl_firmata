@@ -52,13 +52,13 @@ class fl_firmata {open
   } {
     Fl_Window firmata_win {
       label FL_Firmata_Test open
-      xywh {3119 53 645 825} type Double box GLEAM_THIN_UP_BOX color 48 selection_color 48 resizable visible
+      xywh {1202 153 645 825} type Double box GLEAM_THIN_UP_BOX color 48 selection_color 48 resizable visible
     } {
       Fl_Group {} {open
         xywh {10 57 600 741} box BORDER_BOX selection_color 49 resizable
       } {
-        Fl_Box pin_table {
-          xywh {14 60 581 732} color 48 selection_color 48
+        Fl_Box pin_table {selected
+          xywh {14 60 591 732} color 48 selection_color 48
           class Fl_Pin_Table
         }
       }
@@ -103,7 +103,7 @@ quit();}
           label About
           callback {//
 help_about * about = new help_about();
-about->show();} selected
+about->show();}
           xywh {547 13 65 20} box GLEAM_UP_BOX color 48 selection_color 48 labelfont 4
         }
         Fl_Choice port_choice {

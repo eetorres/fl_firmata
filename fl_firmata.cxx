@@ -114,7 +114,7 @@ fl_firmata::fl_firmata() {
     firmata_win->user_data((void*)(this));
     { Fl_Group* o = new Fl_Group(10, 57, 600, 741);
       o->box(FL_BORDER_BOX);
-      { pin_table = new Fl_Pin_Table(14, 60, 581, 732);
+      { pin_table = new Fl_Pin_Table(14, 60, 591, 732);
         pin_table->box(FL_NO_BOX);
         pin_table->color((Fl_Color)48);
         pin_table->selection_color((Fl_Color)48);

@@ -21,9 +21,10 @@
 #include <windows.h>
 #endif
 
-class Serial
-{
+class Serial{
+
 public:
+
   Serial();
   ~Serial();
   std::string error_message(void);
@@ -41,12 +42,14 @@ public:
   void Close(void);
   bool Is_open(void);
   std::string get_name(void);
+
 private:
   std::vector<std::string> list;
   bool port_is_open;
   std::string port_name;
   int baud_rate;
   std::string error_msg;
+
 private:
 #if defined(LINUX) || defined(MACOSX)
   int port_fd;

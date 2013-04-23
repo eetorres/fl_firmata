@@ -55,25 +55,17 @@
   #error "This platform is unsupported, sorry"
 #endif
 
-
-
-
-Serial::Serial()
-{
+Serial::Serial(){
   port_is_open = false;
   baud_rate = 38400;  // default baud rate
 }
 
-Serial::~Serial()
-{
+Serial::~Serial(){
   Close();
 }
 
-
-
 // Open a port, by name.  Return 0 on success, non-zero for error
-int Serial::Open(const std::string& name)
-{
+int Serial::Open(const std::string& name){
   Close();
 #if defined(LINUX)
   struct serial_struct kernel_serial_settings;
@@ -253,28 +245,22 @@ int Serial::Open(const std::string& name)
   return 0;
 }
 
-std::string Serial::get_name(void)
-{
+std::string Serial::get_name(void){
   if (!port_is_open) return "";
   return port_name;
 }
 
-
-
 // Return the last error message in a (hopefully) user friendly format
-std::string Serial::error_message(void)
-{
+std::string Serial::error_message(void){
   return error_msg;
 }
 
-bool Serial::Is_open(void)
-{
+bool Serial::Is_open(void){
   return port_is_open;
 }
 
 // Close the port
-void Serial::Close(void)
-{
+void Serial::Close(void){
   if (!port_is_open) return;
   Output_flush();
   Input_discard();
@@ -289,14 +275,8 @@ void Serial::Close(void)
 #endif
 }
 
-
-
-
-
-
 // set the baud rate
-int Serial::Set_baud(int baud)
-{
+int Serial::Set_baud(int baud){
   if (baud <= 0) return -1;
   //printf("set_baud: %d\n", baud);
   baud_rate = baud;
@@ -397,12 +377,10 @@ int Serial::Set_baud(const std::string& baud_str)
   return Set_baud((int)b);
 }
 
-
 // Read from the serial port.  Returns only the bytes that are
 // already received, up to count.  This always returns without delay,
 // returning 0 if nothing has been received
-int Serial::Read(void *ptr, int count)
-{
+int Serial::Read(void *ptr, int count){
   if (!port_is_open) return -1;
   if (count <= 0) return 0;
 #if defined(LINUX)
@@ -469,8 +447,7 @@ int Serial::Read(void *ptr, int count)
 // Write to the serial port.  This blocks until the data is
 // sent (or in a buffer to be sent).  All bytes are written,
 // unless there is some sort of error.
-int Serial::Write(const void *ptr, int len)
-{
+int Serial::Write(const void *ptr, int len){
   //printf("Write %d\n", len);
   if (!port_is_open) return -1;
 #if defined(LINUX) || defined(MACOSX)
@@ -528,8 +505,7 @@ int Serial::Write(const void *ptr, int len)
 // Wait up to msec for data to become available for reading.
 // return 0 if timeout, or non-zero if one or more bytes are
 // received and can be read.  -1 if an error occurs
-int Serial::Input_wait(int msec)
-{
+int Serial::Input_wait(int msec){
   if (!port_is_open) return -1;
 #if defined(LINUX) || defined(MACOSX)
   fd_set rfds;
@@ -587,8 +563,7 @@ int Serial::Input_wait(int msec)
 }
 
 // Discard all received data that hasn't been read
-void Serial::Input_discard(void)
-{
+void Serial::Input_discard(void){
   if (!port_is_open) return;
 #if defined(LINUX) || defined(MACOSX)
   // does this really work properly (and is it thread safe) on Linux??
@@ -599,8 +574,7 @@ void Serial::Input_discard(void)
 }
 
 // Wait for all transmitted data with Write to actually leave the serial port
-void Serial::Output_flush(void)
-{
+void Serial::Output_flush(void){
   if (!port_is_open) return;
 #if defined(LINUX) || defined(MACOSX)
   tcdrain(port_fd);
@@ -609,10 +583,8 @@ void Serial::Output_flush(void)
 #endif
 }
 
-
 // set DTR and RTS,  0 = low, 1=high, -1=unchanged
-int Serial::Set_control(int dtr, int rts)
-{
+int Serial::Set_control(int dtr, int rts){
   if (!port_is_open) return -1;
 #if defined(LINUX) || defined(MACOSX)
   // on Mac OS X, "man 4 tty"
@@ -645,8 +617,6 @@ int Serial::Set_control(int dtr, int rts)
 #endif
   return 0;
 }
-
-
 
 #if defined(LINUX)
 // All linux serial port device names.  Hopefully all of them anyway.  This
@@ -708,11 +678,8 @@ static const char *devnames[] = {
 #define NUM_DEVNAMES (sizeof(devnames) / sizeof(const char *))
 #endif
 
-
-
 #if defined(MACOSX)
-static void macos_ports(io_iterator_t  * PortIterator, std::vector<std::string>& list)
-{
+static void macos_ports(io_iterator_t  * PortIterator, std::vector<std::string>& list){
   io_object_t modemService;
   CFTypeRef nameCFstring;
   char s[MAXPATHLEN];
@@ -732,14 +699,12 @@ static void macos_ports(io_iterator_t  * PortIterator, std::vector<std::string>&
 }
 #endif
 
-std::string Serial::get_port_name(int i)
-{
+std::string Serial::get_port_name(int i){
   return list[i];
 }
 
 // Return a list of all serial ports
-std::vector<std::string> Serial::port_list()
-{
+std::vector<std::string> Serial::port_list(void){
   list.clear();
 #if defined(LINUX)
   // This is ugly guessing, but Linux doesn't seem to provide anything else.
@@ -893,9 +858,4 @@ std::vector<std::string> Serial::port_list()
 }
 
 
-
-
-
-
-
-
+// END

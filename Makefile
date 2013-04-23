@@ -4,7 +4,7 @@ include makeinclude
 
 all:	$(OBJS)
 	echo "==== Compiling  ====";
-	$(CXX) -o $(PROG) $(OBJS) $(LFLAGS)
+	$(CXX) -o $(PROG)$(SUFX) $(OBJS) $(LFLAGS)
 
 
 clean:
