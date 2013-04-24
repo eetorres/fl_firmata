@@ -12,7 +12,7 @@ MDIR = $(shell sh -c pwd)
 OPTIM  = -O2 -Wall -Wno-deprecated
 LMATH = -lm
 LX11R = -lGLU -lGL -lXft -lXinerama -lX11 -lXext
-LFLTK = -lfltk -lfltk_gl
+LFLTK = -lfltk
 
 CFLAGS = $(OPTIM) -c
 LFLAGS = $(OPTIM) $(LFLTK) $(LX11R)
