@@ -18,9 +18,9 @@ class help_about {open
       code3 {o->resizable(NULL);} modal visible
     } {
       Fl_Box {} {
-        label {FL_Firmata (0.1) is based on the FLTK library. Feel free to use FL_Firmata code under the trems of the GPL licence.
+        label {FL_Firmata (0.1) is based on the FLTK library. Feel free to use FL_Firmata code under the terms of the GPL licence.
 Copyright 2013 by Edmanuel Torres
-eetorres@@gmail.com}
+eetorres@@gmail.com} selected
         xywh {11 15 355 86} color 55 selection_color 55 align 176
       }
       Fl_Box {} {
@@ -57,7 +57,7 @@ class fl_firmata {open
       Fl_Group {} {open
         xywh {10 57 600 741} box BORDER_BOX selection_color 49 resizable
       } {
-        Fl_Box pin_table {selected
+        Fl_Box pin_table {
           xywh {14 60 591 732} color 48 selection_color 48
           class Fl_Pin_Table
         }

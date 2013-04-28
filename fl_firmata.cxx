@@ -15,7 +15,7 @@ help_about::help_about() {
   { Fl_Double_Window* o = help_win = new Fl_Double_Window(375, 175, "About Fl_Firmata");
     help_win->user_data((void*)(this));
     { Fl_Box* o = new Fl_Box(11, 15, 355, 86, "FL_Firmata (0.1) is based on the FLTK library. Feel free to use FL_Firmata co\
-de under the trems of the GPL licence.\nCopyright 2013 by Edmanuel Torres\neet\
+de under the terms of the GPL licence.\nCopyright 2013 by Edmanuel Torres\neet\
 orres@@gmail.com");
       o->color((Fl_Color)55);
       o->selection_color((Fl_Color)55);
