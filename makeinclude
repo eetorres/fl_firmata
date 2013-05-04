@@ -4,7 +4,7 @@ CXX = g++
 
 PROG = fl_firmata_test
 SUFX = _linux64
-SCRS = $(PROG).cxx fl_firmata.cxx Fl_Pin_Table.cxx CFirmata.cxx serial.cxx
+SCRS = $(PROG).cxx fl_firmata.cxx Fl_Scope.cxx Fl_Pin_Table.cxx CFirmata.cxx serial.cxx
 OBJS = $(SCRS:.cxx=.o)
 
 MDIR = $(shell sh -c pwd)

@@ -19,6 +19,8 @@
 #ifndef _FL_PIN_TABLE_H_
 #define _FL_PIN_TABLE_H_
 
+#define _USE_SCOPES_ 1
+
 #include <cstdio>
 #include <cmath>
 #include <FL/Fl.H>
@@ -29,6 +31,9 @@
 #include <FL/Fl_Value_Output.H>
 #include <FL/Fl_Float_Input.H>
 #include <FL/Fl_Slider.H>
+#ifdef _USE_SCOPES_
+#include "Fl_Scope.H"
+#endif
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Output.H>
 #include <FL/Fl_Choice.H>

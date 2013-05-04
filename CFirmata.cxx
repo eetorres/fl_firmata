@@ -2,7 +2,7 @@
  *  Copyright 2013, Edmanuel Torres (eetorres@gmail.com)
  *
  *  this is a port of the Firmata Test Program by
- *  Paul Stoffregen (paul@pjrc.com) to the FLTK GUI.
+ *  Paul Stoffregen (paul@pjrc.com) for the FLTK GUI.
  *  https://github.com/firmata/firmata_test.git
  *
  *  This program is free software: you can redistribute it and/or modify

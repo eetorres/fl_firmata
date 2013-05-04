@@ -170,9 +170,13 @@ void Fl_Pin_Table::add_pin(int pin, pin_t pin_info) {
         case PIN_ANALOG:
         {
           if (pin_info.supported_modes & (1<<MODE_ANALOG)){
+#ifdef _USE_SCOPES_
+            Fl_Scope *wpin = new Fl_Scope(xx,yy,cellw,cellh);
+#else
             Fl_Value_Output *wpin = new Fl_Value_Output(xx,yy,cellw,cellh);
             wpin->box(FL_GLEAM_THIN_DOWN_BOX);
             wpin->value(0.0);
+#endif
             if(c!=pin_mode[pin])
               wpin->deactivate();
             pins[pin][c] = (void*)wpin;
@@ -241,8 +245,13 @@ void Fl_Pin_Table::update_pin_value(int pin, pin_t pin_info) {
     else
       wpin->copy_label("Low");
   }else if(pin_info.mode== MODE_ANALOG){
+#ifdef _USE_SCOPES_
+    Fl_Scope*wpin = (Fl_Scope*)pins[pin][PIN_ANALOG];
+    wpin->Add(pin_info.value);
+#else
     Fl_Value_Output *wpin = (Fl_Value_Output*)pins[pin][PIN_ANALOG];
     wpin->value(pin_info.value);
+#endif
   }
 }
 
