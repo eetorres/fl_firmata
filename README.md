@@ -7,6 +7,8 @@ https://github.com/eetorres/fl_firmata/blob/master/imgs/arduino_mega.png
 
 https://github.com/eetorres/fl_firmata/blob/master/imgs/arduino_uno.png
 
+https://github.com/eetorres/fl_firmata/blob/master/imgs/arduino-uno-scopes.png
+
 To get the shinny looking of the screenshot you need to install the FLTK gleam theme patch, you can download from:
 
 https://github.com/eetorres/fl_gleam
