@@ -63,7 +63,7 @@ public:
   int datatype(){return DataType;};
   void datatype(int t){DataType=t;};
   /* Add Data to Scope */
-  int Add(int);
+  int add(int);
   Fl_Color TraceColour(){return _TraceColour;};
   void TraceColour(Fl_Color c){_TraceColour=c;};
   Fl_Color BackColour(){return _BackColour;};

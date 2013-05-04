@@ -247,7 +247,7 @@ void Fl_Pin_Table::update_pin_value(int pin, pin_t pin_info) {
   }else if(pin_info.mode== MODE_ANALOG){
 #ifdef _USE_SCOPES_
     Fl_Scope*wpin = (Fl_Scope*)pins[pin][PIN_ANALOG];
-    wpin->Add(pin_info.value);
+    wpin->add(pin_info.value);
 #else
     Fl_Value_Output *wpin = (Fl_Value_Output*)pins[pin][PIN_ANALOG];
     wpin->value(pin_info.value);

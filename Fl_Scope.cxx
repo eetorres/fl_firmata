@@ -126,7 +126,7 @@ void Fl_Scope::draw(int xx, int yy, int ww, int hh){
 /*
  * Add(int data)
  */
-int Fl_Scope::Add(int data){
+int Fl_Scope::add(int data){
   //unsigned char *Ptr,*Ptr2;
   int *Ptr,*Ptr2;
   int count;
