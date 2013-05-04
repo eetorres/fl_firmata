@@ -24,8 +24,6 @@
 #define _FL_SCOPE_H_
 
 #include <FL/Fl_Box.H>
-#include "CFirmata.h"
-#include <vector>
 
 #define FL_SCOPE_TRACE_SCROLL     0
 #define FL_SCOPE_TRACE_LOOP       1
@@ -107,7 +105,6 @@ private:
   int RedrawMode;
   int LineType;
   int DataType;
-  std::vector<std::string> channels;
 };
 
 #endif
