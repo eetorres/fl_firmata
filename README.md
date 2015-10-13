@@ -3,6 +3,8 @@ fl_firmata
 
 Firmata Test Program using the FLTK GUI. This is a Firmata test program. FLTK is a great GUI to develop PC interfaces for microcontrolers. The program was tested with the Arduino UNO and MEGA 2560. 
 
+This Git only has the code for the GUI app. In order to comunicate with the Arduino the SandardFirmata from File->Examples->Firmata must be loaded.
+
 <img src="https://github.com/eetorres/fl_firmata/blob/master/imgs/arduino-uno-scopes.png?raw=true" alt="Mega"> 
 
 <img src="https://github.com/eetorres/fl_firmata/blob/master/imgs/arduino_mega.png?raw=true" alt="Mega">
