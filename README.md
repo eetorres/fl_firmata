@@ -5,9 +5,7 @@ Firmata Test Program using the FLTK GUI. This is a Firmata test program. FLTK is
 
 The FLTK GUI library can be downloaded from http://www.fltk.org/software.php?VERSION=1.3.3
 
-This Git only has the code for the GUI app. In order to comunicate the PC with the Arduino. Using the ArduinoIDE the SandardFirmata from File->Examples->Firmata must be loaded in the Arduino board.
-
-(File -> Open -> Examples > Library-Firmata > StandardFirmata, in latest Arduino IDE.)
+This Git only has the code for the GUI app. In order to comunicate the PC with the Arduino. Using the ArduinoIDE the StandardFirmata from File->Examples->Firmata must be loaded in the Arduino board.
 
 <img src="https://github.com/eetorres/fl_firmata/blob/master/imgs/arduino-uno-scopes.png?raw=true" alt="Mega"> 
 
