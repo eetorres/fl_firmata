@@ -21,7 +21,7 @@
 
 #include "CFirmata.h"
 
-//#define DEBUG 1
+#define DEBUG 1
 
 CFirmata::CFirmata(){
   port.Set_baud(57600);

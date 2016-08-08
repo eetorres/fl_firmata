@@ -11,8 +11,8 @@ MDIR = $(shell sh -c pwd)
 
 OPTIM  = -O2 -Wall -Wno-deprecated
 LMATH = -lm
-LX11R = -lGLU -lGL -lXft -lXinerama -lX11 -lXext
-LFLTK = -lfltk
+LX11R =
+LFLTK = $(shell fltk-config  --use-gl --ldstaticflags)
 
 CFLAGS = $(OPTIM) -c
 LFLAGS = $(OPTIM) $(LFLTK) $(LX11R)
