@@ -1,12 +1,12 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0302 
-header_name {.h} 
+version 1.0304
+header_name {.h}
 code_name {.cxx}
 decl {\#include "Fl_Pin_Table.h"} {public global
-} 
+}
 
 decl {std::string str_var;} {private local
-} 
+}
 
 class help_about {open
 } {
@@ -14,18 +14,18 @@ class help_about {open
   } {
     Fl_Window help_win {
       label {About Fl_Firmata} open
-      xywh {2503 737 375 175} type Double selection_color 49
+      xywh {1304 793 375 175} type Double
       code3 {o->resizable(NULL);} modal visible
     } {
       Fl_Box {} {
         label {FL_Firmata (0.1) is based on the FLTK library. Feel free to use FL_Firmata code under the terms of the GPL licence.
 Copyright 2013 by Edmanuel Torres
-eetorres@@gmail.com} selected
+eetorres@@gmail.com}
         xywh {11 15 355 86} color 55 selection_color 55 align 176
       }
       Fl_Box {} {
         label {Get FLTK from www.fltk.org.}
-        xywh {75 138 212 22} selection_color 49 align 149
+        xywh {75 138 212 22} align 149
       }
       Fl_Output web {
         xywh {25 103 333 25} box NO_BOX color 47 selection_color 47 align 0
@@ -44,7 +44,7 @@ eetorres@@gmail.com} selected
     code {//
   help_win->show();} {}
   }
-} 
+}
 
 class fl_firmata {open
 } {
@@ -52,10 +52,10 @@ class fl_firmata {open
   } {
     Fl_Window firmata_win {
       label FL_Firmata_Test open
-      xywh {1202 153 645 825} type Double box GLEAM_THIN_UP_BOX color 48 selection_color 48 resizable visible
+      xywh {1034 209 645 825} type Double box GLEAM_THIN_UP_BOX color 48 selection_color 48 resizable visible
     } {
       Fl_Group {} {open
-        xywh {10 57 600 741} box BORDER_BOX selection_color 49 resizable
+        xywh {10 57 600 741} box BORDER_BOX resizable
       } {
         Fl_Box pin_table {
           xywh {14 60 591 732} color 48 selection_color 48
@@ -63,7 +63,7 @@ class fl_firmata {open
         }
       }
       Fl_Group {} {open
-        xywh {0 -2 612 45} selection_color 49
+        xywh {0 -2 612 45}
       } {
         Fl_Button connect {
           label Connect
@@ -113,11 +113,11 @@ pin_table->set_port_name((int)port_choice->value());} open
           xywh {243 13 140 20} box GLEAM_DOWN_BOX down_box BORDER_BOX color 18 selection_color 46
         } {}
         Fl_Box {} {
-          xywh {430 5 10 35} selection_color 49 resizable
+          xywh {430 5 10 35} resizable
         }
       }
       Fl_Box status_bar {
-        xywh {9 800 425 20} selection_color 49
+        xywh {9 800 425 20}
         code0 {o->align(FL_ALIGN_LEFT|FL_ALIGN_INSIDE);}
       }
     }
@@ -131,6 +131,7 @@ status_bar->copy_label((char*)str_var.c_str());
 
 std::vector<std::string> list = pin_table->get_port_list();
 num = list.size();
+printf("board ports %i\\n", num);
 for (int i=0; i < num; i++) {
     //printf("%d: port %s\\n", i, (const char *)list[i].c_str());
     port_choice->add((const char *)list[i].c_str());
@@ -141,9 +142,13 @@ for (int i=0; i < num; i++) {
     }
 }
 if(!any){
- port_choice->value(0);
- pin_table->set_port_name((int)port_choice->value());
-}} {}
+  port_choice->value(0);
+ //pin_table->set_port_name((int)port_choice->value());
+}
+if(num > 0){
+  pin_table->set_port_name((int)port_choice->value());
+}} {selected
+    }
   }
   Function {show()} {open
   } {
@@ -168,4 +173,4 @@ o->pin_table->get_next_data();
 s =o->pin_table->get_status();
 o->status_bar->copy_label((char*)s.c_str());} {}
   }
-} 
+}

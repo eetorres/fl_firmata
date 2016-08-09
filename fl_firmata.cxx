@@ -184,9 +184,9 @@ fl_firmata::fl_firmata() {
   
   std::vector<std::string> list = pin_table->get_port_list();
   num = list.size();
-  printf("num = %i\n", num);
+  printf("board ports %i\n", num);
   for (int i=0; i < num; i++) {
-      printf("%d: port %s\n", i, (const char *)list[i].c_str());
+      //printf("%d: port %s\n", i, (const char *)list[i].c_str());
       port_choice->add((const char *)list[i].c_str());
       str_var = pin_table->get_port_name();
       if (pin_table->is_port_open() && !strcmp(str_var.c_str(),list[i].c_str())) {
@@ -196,6 +196,7 @@ fl_firmata::fl_firmata() {
   }
   if(!any){
     port_choice->value(0);
+   //pin_table->set_port_name((int)port_choice->value());
   }
   if(num > 0){
     pin_table->set_port_name((int)port_choice->value());
