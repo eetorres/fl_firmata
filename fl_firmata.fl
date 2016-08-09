@@ -14,13 +14,13 @@ class help_about {open
   } {
     Fl_Window help_win {
       label {About Fl_Firmata} open
-      xywh {1304 793 375 175} type Double
+      xywh {1304 821 375 175} type Double
       code3 {o->resizable(NULL);} modal visible
     } {
       Fl_Box {} {
-        label {FL_Firmata (0.1) is based on the FLTK library. Feel free to use FL_Firmata code under the terms of the GPL licence.
+        label {FL_Firmata (0.2) is based on the FLTK library. Feel free to use FL_Firmata code under the terms of the GPL licence.
 Copyright 2013 by Edmanuel Torres
-eetorres@@gmail.com}
+eetorres@@gmail.com} selected
         xywh {11 15 355 86} color 55 selection_color 55 align 176
       }
       Fl_Box {} {
@@ -147,8 +147,7 @@ if(!any){
 }
 if(num > 0){
   pin_table->set_port_name((int)port_choice->value());
-}} {selected
-    }
+}} {}
   }
   Function {show()} {open
   } {
