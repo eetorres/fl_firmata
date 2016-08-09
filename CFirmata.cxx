@@ -87,7 +87,7 @@ void CFirmata::open_port(void){
   }
   update_status();
 #if DEBUG_PORT
-  // the port is close only when debuging
+  // the port is closed only when debuging
   if (port.Is_open()) {
     port.Close();//<------------------
     printf("port is closed\n");
