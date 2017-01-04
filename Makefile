@@ -9,4 +9,4 @@ all:	$(OBJS)
 
 clean:
 	echo "==== Cleaning ====";
-	rm -rf *.o $(OBJS) $(PROG)
+	rm -rf *.o $(OBJS) $(PROG)$(SUFX)

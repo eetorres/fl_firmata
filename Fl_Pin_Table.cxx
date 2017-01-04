@@ -49,7 +49,7 @@ void Fl_Pin_Table::add_pin(int pin, pin_t pin_info) {
   {
 #if DEBUG
     // create widgets
-    printf(" Create widget\n");
+    printf(" === Create widget for pin [%i] ===\n",pin);
 #endif
     for( int c=0; c<COLS; c++ ){
       switch(c){
@@ -71,9 +71,9 @@ void Fl_Pin_Table::add_pin(int pin, pin_t pin_info) {
 #if DEBUG
           printf(" pin mode is: %u\n",pin_info.mode);
 #endif
-          if(pin_info.supported_modes & (1<<MODE_INPUT)){
+          if(pin_info.supported_modes & (1<<PIN_MODE_INPUT)){
             wpin->add("Input");
-            if (pin_info.mode == MODE_INPUT){
+            if (pin_info.mode == PIN_MODE_INPUT){
               mode=(int)wpin->size();
 #if DEBUG
               printf(" mode is input: %i\n",mode);
@@ -81,9 +81,9 @@ void Fl_Pin_Table::add_pin(int pin, pin_t pin_info) {
               pin_mode[pin] = PIN_INPUT;
             }
           }
-          if(pin_info.supported_modes & (1<<MODE_OUTPUT)){
+          if(pin_info.supported_modes & (1<<PIN_MODE_OUTPUT)){
             wpin->add("Output");
-            if (pin_info.mode == MODE_OUTPUT){
+            if (pin_info.mode == PIN_MODE_OUTPUT){
               mode=(int)wpin->size();
 #if DEBUG
               printf(" mode is output: %i\n",mode);
@@ -91,9 +91,9 @@ void Fl_Pin_Table::add_pin(int pin, pin_t pin_info) {
               pin_mode[pin] = PIN_OUTPUT;
             }
           }
-          if(pin_info.supported_modes & (1<<MODE_ANALOG)){
+          if(pin_info.supported_modes & (1<<PIN_MODE_ANALOG)){
             wpin->add("Analog");
-            if (pin_info.mode == MODE_ANALOG){
+            if (pin_info.mode == PIN_MODE_ANALOG){
               mode=(int)wpin->size();
 #if DEBUG
               printf(" mode is analog: %i\n",mode);
@@ -101,9 +101,9 @@ void Fl_Pin_Table::add_pin(int pin, pin_t pin_info) {
               pin_mode[pin] = PIN_ANALOG;
             }
           }
-          if(pin_info.supported_modes & (1<<MODE_PWM)){
+          if(pin_info.supported_modes & (1<<PIN_MODE_PWM)){
             wpin->add("PWM");
-            if (pin_info.mode == MODE_PWM){
+            if (pin_info.mode == PIN_MODE_PWM){
               mode=(int)wpin->size();
 #if DEBUG
               printf(" mode is pwm: %i\n",mode);
@@ -111,9 +111,9 @@ void Fl_Pin_Table::add_pin(int pin, pin_t pin_info) {
               pin_mode[pin] = PIN_PWM;
             }
           }
-          if (pin_info.supported_modes & (1<<MODE_SERVO)){
+          if (pin_info.supported_modes & (1<<PIN_MODE_SERVO)){
             wpin->add("Servo");
-            if (pin_info.mode == MODE_SERVO){
+            if (pin_info.mode == PIN_MODE_SERVO){
               mode=(int)wpin->size();
 #if DEBUG
               printf(" mode is servo: %u\n",mode);
@@ -127,7 +127,7 @@ void Fl_Pin_Table::add_pin(int pin, pin_t pin_info) {
         }
         case PIN_INPUT:
         {
-          if (pin_info.supported_modes & (1<<MODE_INPUT)){
+          if (pin_info.supported_modes & (1<<PIN_MODE_INPUT)){
             Fl_Box *wpin = new Fl_Box(xx,yy,cellw,cellh);
             wpin->box(FL_GLEAM_THIN_DOWN_BOX);
             //in->box(FL_NO_BOX)
@@ -145,7 +145,7 @@ void Fl_Pin_Table::add_pin(int pin, pin_t pin_info) {
         }
         case PIN_OUTPUT:
         {
-          if (pin_info.supported_modes & (1<<MODE_OUTPUT)){
+          if (pin_info.supported_modes & (1<<PIN_MODE_OUTPUT)){
           Fl_Light_Button *wpin = new Fl_Light_Button(xx,yy,cellw,cellh);
           wpin->box(FL_GLEAM_UP_BOX);
           wpin->callback((Fl_Callback*)cb_eval_pin,(void*)this);
@@ -169,7 +169,10 @@ void Fl_Pin_Table::add_pin(int pin, pin_t pin_info) {
         }
         case PIN_ANALOG:
         {
-          if (pin_info.supported_modes & (1<<MODE_ANALOG)){
+          if (pin_info.supported_modes & (1<<PIN_MODE_ANALOG)){
+#if DEBUG
+            printf("analog capable pin %i\n",pin);
+#endif
 #ifdef _USE_SCOPES_
             Fl_Scope *wpin = new Fl_Scope(xx,yy,cellw,cellh);
 #else
@@ -184,13 +187,14 @@ void Fl_Pin_Table::add_pin(int pin, pin_t pin_info) {
             Fl_Box *wpin = new Fl_Box(xx,yy,cellw,cellh);
             wpin->box(FL_GLEAM_THIN_DOWN_BOX);
             wpin->deactivate();
+            wpin->copy_label("!!!!");
             pins[pin][PIN_ANALOG] = (void*)wpin;
           }
           break;
         }
         case PIN_PWM:
         {
-          if (pin_info.supported_modes & (1<<MODE_PWM)){
+          if (pin_info.supported_modes & (1<<PIN_MODE_PWM)){
             Fl_Slider *wpin = new Fl_Slider(xx,yy,cellw,cellh);
             wpin->type(FL_HORIZONTAL);
             wpin->box(FL_GLEAM_DOWN_BOX);
@@ -210,7 +214,7 @@ void Fl_Pin_Table::add_pin(int pin, pin_t pin_info) {
         }
         case PIN_SERVO:
         {
-          if (pin_info.supported_modes & (1<<MODE_SERVO)){
+          if (pin_info.supported_modes & (1<<PIN_MODE_SERVO)){
             Fl_Slider *wpin = new Fl_Slider(xx,yy,cellw,cellh);
             wpin->type(FL_HOR_NICE_SLIDER);
             wpin->box(FL_GLEAM_DOWN_BOX);
@@ -238,13 +242,13 @@ void Fl_Pin_Table::add_pin(int pin, pin_t pin_info) {
 }
 
 void Fl_Pin_Table::update_pin_value(int pin, pin_t pin_info) {
-  if(pin_info.mode== MODE_INPUT){
+  if(pin_info.mode == PIN_MODE_INPUT){
     Fl_Box *wpin = (Fl_Box*)pins[pin][PIN_INPUT];
     if(pin_info.value)
       wpin->copy_label("High");
     else
       wpin->copy_label("Low");
-  }else if(pin_info.mode== MODE_ANALOG){
+  }else if(pin_info.mode == PIN_MODE_ANALOG){
 #ifdef _USE_SCOPES_
     Fl_Scope*wpin = (Fl_Scope*)pins[pin][PIN_ANALOG];
     wpin->add(pin_info.value);
@@ -311,15 +315,15 @@ void Fl_Pin_Table::eval_pin(void){
       uint8_t newmode=0;
       chm = (char*)wpin->text((int)wpin->value());
       if(!strcmp(chm,pin_modes[0].c_str())){
-        newmode = MODE_INPUT;
+        newmode = PIN_MODE_INPUT;
       }else if(!strcmp(chm,pin_modes[1].c_str())){
-        newmode = MODE_OUTPUT;
+        newmode = PIN_MODE_OUTPUT;
       }else if(!strcmp(chm,pin_modes[2].c_str())){
-        newmode = MODE_ANALOG;
+        newmode = PIN_MODE_ANALOG;
       }else if(!strcmp(chm,pin_modes[3].c_str())){
-        newmode = MODE_PWM;
+        newmode = PIN_MODE_PWM;
       }else if(!strcmp(chm,pin_modes[4].c_str())){
-        newmode = MODE_SERVO;
+        newmode = PIN_MODE_SERVO;
       }
 #if DEBUG
       printf(" choice text = %s\n",chm);
@@ -341,7 +345,7 @@ void Fl_Pin_Table::eval_pin(void){
 #endif
       pin = pin_number[prow];
       pint = get_pin_info(pin);
-      if(pint.mode == MODE_OUTPUT){
+      if(pint.mode == PIN_MODE_OUTPUT){
         Fl_Light_Button *wpin = (Fl_Light_Button*)pins[pin][PIN_OUTPUT];
 #if DEBUG
         printf(" output pin %d value = %d\n",pin,(int)wpin->value());
@@ -360,7 +364,7 @@ void Fl_Pin_Table::eval_pin(void){
 #endif
       pin = pin_number[prow];
       pint = get_pin_info(pin);
-      if(pint.mode == MODE_PWM){
+      if(pint.mode == PIN_MODE_PWM){
         Fl_Slider *wpin = (Fl_Slider*)pins[pin][PIN_PWM];
 #if DEBUG
         printf(" pwm pin %d value = %d\n",pin,(int)wpin->value());
@@ -374,7 +378,7 @@ void Fl_Pin_Table::eval_pin(void){
 #endif
       pin = pin_number[prow];
       pint = get_pin_info(pin);
-      if(pint.mode == MODE_SERVO){
+      if(pint.mode == PIN_MODE_SERVO){
         Fl_Slider *wpin = (Fl_Slider*)pins[pin][PIN_SERVO];
 #if DEBUG
         printf(" servo pin %d value = %d\n",pin,(int)wpin->value());
@@ -390,14 +394,14 @@ void Fl_Pin_Table::pin_old_mode(int pin, uint8_t oldmode){
 #if DEBUG
   printf("[old mode]\n");
 #endif
-  if(oldmode == MODE_INPUT){
+  if(oldmode == PIN_MODE_INPUT){
     Fl_Box *wpin = (Fl_Box*)pins[pin][PIN_INPUT];
     wpin->copy_label("Low");
 #if DEBUG
     printf(" input pin %d value = %s\n",pin,(char*)wpin->label());
 #endif
     wpin->deactivate();
-  }else if(oldmode == MODE_OUTPUT){
+  }else if(oldmode == PIN_MODE_OUTPUT){
     Fl_Light_Button *wpin = (Fl_Light_Button*)pins[pin][PIN_OUTPUT];
     wpin->label("Low");
     wpin->value(0);
@@ -405,20 +409,20 @@ void Fl_Pin_Table::pin_old_mode(int pin, uint8_t oldmode){
     printf(" output pin %d value = %d\n",pin,(int)wpin->value());
 #endif
     wpin->deactivate();
-  }else if(oldmode == MODE_ANALOG){
+  }else if(oldmode == PIN_MODE_ANALOG){
     Fl_Value_Output *wpin = (Fl_Value_Output*)pins[pin][PIN_ANALOG];
 #if DEBUG
     printf(" analog pin %d value = %d\n",pin,(int)wpin->value());
 #endif
     wpin->deactivate();
-  }else if(oldmode == MODE_PWM){
+  }else if(oldmode == PIN_MODE_PWM){
     Fl_Slider *wpin = (Fl_Slider*)pins[pin][PIN_PWM];
     wpin->value(0.0);
 #if DEBUG
     printf(" pwm pin %d value = %d\n",pin,(int)wpin->value());
 #endif
     wpin->deactivate();
-  }else if(oldmode == MODE_SERVO){
+  }else if(oldmode == PIN_MODE_SERVO){
     Fl_Slider *wpin = (Fl_Slider*)pins[pin][PIN_SERVO];
     wpin->value(0.0);
 #if DEBUG
@@ -432,31 +436,31 @@ void Fl_Pin_Table::pin_new_mode(int pin, uint8_t newmode){
 #if DEBUG
   printf("[new mode]\n");
 #endif
-  if(newmode == MODE_INPUT){
+  if(newmode == PIN_MODE_INPUT){
     Fl_Box *wpin = (Fl_Box*)pins[pin][PIN_INPUT];
 #if DEBUG
     printf(" input pin %d value = %s\n",pin,(char*)wpin->label());
 #endif
     wpin->activate();
-  }else if(newmode == MODE_OUTPUT){
+  }else if(newmode == PIN_MODE_OUTPUT){
     Fl_Light_Button *wpin = (Fl_Light_Button*)pins[pin][PIN_OUTPUT];
 #if DEBUG
     printf(" output pin %d value = %d\n",pin,(int)wpin->value());
 #endif
     wpin->activate();
-  }else if(newmode == MODE_ANALOG){
+  }else if(newmode == PIN_MODE_ANALOG){
     Fl_Value_Output *wpin = (Fl_Value_Output*)pins[pin][PIN_ANALOG];
 #if DEBUG
     printf(" analog pin %d value = %d\n",pin,(int)wpin->value());
 #endif
     wpin->activate();
-  }else if(newmode == MODE_PWM){
+  }else if(newmode == PIN_MODE_PWM){
     Fl_Slider *wpin = (Fl_Slider*)pins[pin][PIN_PWM];
 #if DEBUG
     printf(" pwm pin %d value = %d\n",pin,(int)wpin->value());
 #endif
     wpin->activate();
-  }else if(newmode == MODE_SERVO){
+  }else if(newmode == PIN_MODE_SERVO){
     Fl_Slider *wpin = (Fl_Slider*)pins[pin][PIN_SERVO];
 #if DEBUG
     printf(" servo pin %d value = %d\n",pin,(int)wpin->value());

@@ -21,7 +21,7 @@
 
 #include "CFirmata.h"
 
-#define DEBUG 1
+//#define DEBUG 1
 
 CFirmata::CFirmata(){
   port.Set_baud(57600);
@@ -60,12 +60,15 @@ void CFirmata::init_data(void){
 }
 
 void CFirmata::open_port(void){
-  port.Close();
+  if(port.Is_open()){
+    port.Close();
+  }
+#if DEBUG
   //printf("OnPort, id = %d, name = %s\n", id, (const char *)port_name);
-  //printf("OnPort, name = %s\n", (const char *)port_name.c_str());
+  printf("OnPort, name = %s\n", (const char *)port_name.c_str());
+#endif
   port.Open(port_name);
   port.Set_baud(57600);
-
   if (port.Is_open()) {
 #if DEBUG
     printf("port is open\n");
@@ -107,6 +110,7 @@ void CFirmata::close_port(void){
 
 void CFirmata::parse_event(void){
   uint8_t buf[1024];
+  //uint8_t buf[64];
   int r;
 //#if DEBUG
 //  printf("Idle event\n");
@@ -138,11 +142,11 @@ void CFirmata::parse(const uint8_t *buf, int len){
   p = buf;
   end = p + len;
   for (p = buf; p < end; p++) {
-    uint8_t msn = *p & 0xF0;
-    if (msn == 0xE0 || msn == 0x90 || *p == 0xF9) {
+    uint8_t msn = *p & START_SYSEX;
+    if (msn == ANALOG_MESSAGE || msn == DIGITAL_MESSAGE || *p == REPORT_VERSION) {
       parse_command_len = 3;
       parse_count = 0;
-    } else if (msn == 0xC0 || msn == 0xD0) {
+    } else if (msn == REPORT_ANALOG || msn == REPORT_DIGITAL) {
       parse_command_len = 2;
       parse_count = 0;
     } else if (*p == START_SYSEX) {
@@ -165,9 +169,9 @@ void CFirmata::parse(const uint8_t *buf, int len){
 }
 
 void CFirmata::do_message(void){
-  uint8_t cmd = (parse_buf[0] & 0xF0);
+  uint8_t cmd = (parse_buf[0] & START_SYSEX);
   //printf("message, %d bytes, %02X\n", parse_count, parse_buf[0]);
-  if (cmd == 0xE0 && parse_count == 3) {
+  if (cmd == ANALOG_MESSAGE && parse_count == 3) {
     int analog_ch = (parse_buf[0] & 0x0F);
     int analog_val = parse_buf[1] | (parse_buf[2] << 7);
     for (int pin=0; pin<128; pin++) {
@@ -180,14 +184,15 @@ void CFirmata::do_message(void){
     }
     return;
   }
-  if (cmd == 0x90 && parse_count == 3) {
+  if (cmd == DIGITAL_MESSAGE && parse_count == 3) {
     int port_num = (parse_buf[0] & 0x0F);
     int port_val = parse_buf[1] | (parse_buf[2] << 7);
     int pin = port_num * 8;
     //printf("port_num = %d, pin = %d, port_val = %d\n", port_num, pin, port_val);
-    for (int mask=1; mask & 0xFF; mask <<= 1, pin++) {
-      if (pin_info[pin].mode == MODE_INPUT) {
-        uint32_t val = (port_val & mask) ? 1 : 0;
+    for (int mask=1; mask & SYSTEM_RESET; mask <<= 1, pin++) {
+      if (pin_info[pin].mode == PIN_MODE_INPUT) {
+        //uint32_t val = (port_val & mask) ? 1 : 0;
+        uint8_t val = (port_val & mask) ? 1 : 0;
         if (pin_info[pin].value != val) {
           //printf("pin %d is %d\n", pin, val);
           pin_info[pin].value = val;
@@ -204,7 +209,7 @@ void CFirmata::do_message(void){
       char name[140];
       int len=0;
       for (int i=4; i < parse_count-2; i+=2) {
-        name[len++] = (parse_buf[i] & 0x7F) | ((parse_buf[i+1] & 0x7F) << 7);
+        name[len++] = (parse_buf[i] & SYSEX_REALTIME) | ((parse_buf[i+1] & SYSEX_REALTIME) << 7);
       }
       name[len++] = '-';
       name[len++] = parse_buf[2] + '0';
@@ -227,27 +232,49 @@ void CFirmata::do_message(void){
       buf[len++] = CAPABILITY_QUERY; // read capabilities
       buf[len++] = END_SYSEX;
       for (int i=0; i<16; i++) {
-        buf[len++] = 0xC0 | i;  // report analog
+        buf[len++] = REPORT_ANALOG | i;  // report analog
         buf[len++] = 1;
-        buf[len++] = 0xD0 | i;  // report digital
+        buf[len++] = REPORT_DIGITAL | i;  // report digital
         buf[len++] = 1;
       }
       port.Write(buf, len);
       tx_count += len;
     } else if (parse_buf[1] == CAPABILITY_RESPONSE) {
-      int pin, i, n;
+      int old_pin, pin, i, n;
       for (pin=0; pin < 128; pin++) {
         pin_info[pin].supported_modes = 0;
       }
+#if DEBUG
+      printf(" [ supported modes ] ",pin);
+#endif
+      old_pin=0;
       for (i=2, n=0, pin=0; i<parse_count; i++) {
-        if (parse_buf[i] == 127) {
+        //if (parse_buf[i] == 127) {
+        if ( pin != old_pin){
+#if DEBUG
+          printf(" [ --- pin %i --- ]\n",pin);
+#endif
+          old_pin=pin;
+        }
+        if (parse_buf[i] == END_PIN_MODES) {
           pin++;
+#if DEBUG
+          printf("\n");
+#endif
           n = 0;
           continue;
         }
-        if (n == 0) {
+        // There is an error with the MEGA and DUE analog pins
+        else if (n == 0) {
+        //if (n == 0) {
           // first byte is supported mode
+          //printf("Check %"PRIu64"\n",pin_info[pin].supported_modes);
           pin_info[pin].supported_modes |= (1<<parse_buf[i]);
+#if DEBUG
+          printf("0x%02x -",parse_buf[i]);
+#endif
+          //printf("0x%"PRIu64" ",pin_info[pin].supported_modes);
+          //n = n ^ 1;
         }
         n = n ^ 1;
       }
@@ -268,20 +295,47 @@ void CFirmata::do_message(void){
       int pin=0;
       for (int i=2; i<parse_count-1; i++) {
         pin_info[pin].analog_channel = parse_buf[i];
+#if DEBUG
+        printf("analog map for pin %i is %u\n",pin,pin_info[pin].analog_channel);
+#endif
+        //if(pin_info[pin].analog_channel != 127 && pin < 128)
+          //firmata_pinMode(pin,PIN_MODE_ANALOG);
         pin++;
       }
       return;
     } else if (parse_buf[1] == PIN_STATE_RESPONSE && parse_count >= 6) {
       int pin = parse_buf[2];
-      pin_info[pin].mode = parse_buf[3];
+      pin_info[pin].mode  = parse_buf[3];
       pin_info[pin].value = parse_buf[4];
       if (parse_count > 6) pin_info[pin].value |= (parse_buf[5] << 7);
       if (parse_count > 7) pin_info[pin].value |= (parse_buf[6] << 14);
-      //printf("add pin\n");
+#if DEBUG
+      printf("=== add pin %i ===\n",pin);
+      printf("mode for pin %i is %u\n",pin,pin_info[pin].mode);
+#endif
       add_pin(pin,pin_info[pin]);// <------ virtual
+      //usleep( 10000 );
+      //pin++;
     }
     return;
   }
+}
+
+
+void CFirmata::firmata_pinMode(int pin, int mode)
+{
+  //int res;
+  uint8_t buff[4];
+  pin_info[pin].mode = mode;
+  buff[0] = SET_PIN_MODE;
+  buff[1] = pin;
+  buff[2] = mode;
+#if DEBUG
+  printf("Setting pinMode at: %i with value: %i\n", pin, mode);
+#endif
+  //res = serial_write(firmata->serial, buff, 3);
+  port.Write(buff, 3);
+  //return (res);
 }
 
 void CFirmata::update_status(void){
@@ -326,16 +380,16 @@ void CFirmata::set_toggle_button(int n, int val){
   int port_val = 0;
   for (int i=0; i<8; i++) {
     int p = port_num * 8 + i;
-    if (pin_info[p].mode == MODE_OUTPUT || pin_info[p].mode == MODE_INPUT) {
+    if (pin_info[p].mode == PIN_MODE_OUTPUT || pin_info[p].mode == PIN_MODE_INPUT) {
       if (pin_info[p].value) {
         port_val |= (1<<i);
       }
     }
   }
   uint8_t buf[3];
-  buf[0] = 0x90 | port_num;
-  buf[1] = port_val & 0x7F;
-  buf[2] = (port_val >> 7) & 0x7F;
+  buf[0] = DIGITAL_MESSAGE | port_num;
+  buf[1] = port_val & SYSEX_REALTIME;
+  buf[2] = (port_val >> 7) & SYSEX_REALTIME;
   port.Write(buf, 3);
   tx_count += 3;
   update_status();
@@ -347,24 +401,24 @@ void CFirmata::set_slider_drag(int n, int val){
   if (pin <= 15 && val <= 16383) {
     //printf("Slider Drag, pin=%d, val=%d\n", pin, val);
     uint8_t buf[3];
-    buf[0] = 0xE0 | pin;
-    buf[1] = val & 0x7F;
-    buf[2] = (val >> 7) & 0x7F;
+    buf[0] = ANALOG_MESSAGE | pin;
+    buf[1] = val & SYSEX_REALTIME;
+    buf[2] = (val >> 7) & SYSEX_REALTIME;
     port.Write(buf, 3);
     tx_count += 3;
   } else {
     //printf("Slider Drag, pin=%d, val=%d\n", pin, val);
     uint8_t buf[12];
     int len=4;
-    buf[0] = 0xF0;
-    buf[1] = 0x6F;
+    buf[0] = START_SYSEX;
+    buf[1] = EXTENDED_ANALOG;
     buf[2] = pin;
-    buf[3] = val & 0x7F;
-    if (val > 0x00000080) buf[len++] = (val >> 7) & 0x7F;
-    if (val > 0x00004000) buf[len++] = (val >> 14) & 0x7F;
-    if (val > 0x00200000) buf[len++] = (val >> 21) & 0x7F;
-    if (val > 0x10000000) buf[len++] = (val >> 28) & 0x7F;
-    buf[len++] = 0xF7;
+    buf[3] = val & ANALOG_MESSAGE;
+    if (val > 0x00000080) buf[len++] = (val >> 7) & SYSEX_REALTIME;
+    if (val > 0x00004000) buf[len++] = (val >> 14) & SYSEX_REALTIME;
+    if (val > 0x00200000) buf[len++] = (val >> 21) & SYSEX_REALTIME;
+    if (val > 0x10000000) buf[len++] = (val >> 28) & SYSEX_REALTIME;
+    buf[len++] = SYSEX_REALTIME;
     port.Write(buf, len);
     tx_count += len;
   }
@@ -374,7 +428,7 @@ void CFirmata::set_slider_drag(int n, int val){
 void CFirmata::set_pin_mode(int pin, uint8_t mode){
   // send the mode change message
   uint8_t buf[4];
-  buf[0] = 0xF4;
+  buf[0] = SET_PIN_MODE;
   buf[1] = pin;
   buf[2] = mode;
   port.Write(buf, 3);

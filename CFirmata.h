@@ -24,6 +24,9 @@
 
 #include"serial.h"
 #include<iostream>
+#include<inttypes.h>
+#include<unistd.h>
+#include"FirmataConstants.h"
 
 typedef struct {
   uint8_t mode;
@@ -32,25 +35,27 @@ typedef struct {
   uint32_t value;
 } pin_t;
 
-#define MODE_INPUT    0x00
-#define MODE_OUTPUT   0x01
-#define MODE_ANALOG   0x02
-#define MODE_PWM      0x03
-#define MODE_SERVO    0x04
-#define MODE_SHIFT    0x05
-#define MODE_I2C      0x06
+#define END_PIN_MODES   0x7F
 
-#define START_SYSEX             0xF0 // start a MIDI Sysex message
-#define END_SYSEX               0xF7 // end a MIDI Sysex message
-#define PIN_MODE_QUERY          0x72 // ask for current and supported pin modes
-#define PIN_MODE_RESPONSE       0x73 // reply with current and supported pin modes
-#define PIN_STATE_QUERY         0x6D
-#define PIN_STATE_RESPONSE      0x6E
-#define CAPABILITY_QUERY        0x6B
-#define CAPABILITY_RESPONSE     0x6C
-#define ANALOG_MAPPING_QUERY    0x69
-#define ANALOG_MAPPING_RESPONSE 0x6A
-#define REPORT_FIRMWARE         0x79 // report name and version of the firmware
+//#define MODE_INPUT    0x00
+//#define MODE_OUTPUT   0x01
+//#define MODE_ANALOG   0x02
+//#define MODE_PWM      0x03
+//#define MODE_SERVO    0x04
+//#define MODE_SHIFT    0x05
+//#define MODE_I2C      0x06
+
+//#define START_SYSEX             0xF0 // start a MIDI Sysex message
+//#define END_SYSEX               0xF7 // end a MIDI Sysex message
+//#define PIN_MODE_QUERY          0x72 // ask for current and supported pin modes
+//#define PIN_MODE_RESPONSE       0x73 // reply with current and supported pin modes
+//#define PIN_STATE_QUERY         0x6D
+//#define PIN_STATE_RESPONSE      0x6E
+//#define CAPABILITY_QUERY        0x6B
+//#define CAPABILITY_RESPONSE     0x6C
+//#define ANALOG_MAPPING_QUERY    0x69
+//#define ANALOG_MAPPING_RESPONSE 0x6A
+//#define REPORT_FIRMWARE         0x79 // report name and version of the firmware
 
 class CFirmata{
 
@@ -95,6 +100,7 @@ public:
   void set_toggle_button(int,int);
   void set_slider_drag(int,int);
   void set_pin_mode(int,uint8_t);
+  void firmata_pinMode(int pin, int mode);
   //
   std::string get_status(void);
   bool is_port_open(void);

@@ -19,7 +19,7 @@
 #ifndef _FL_PIN_TABLE_H_
 #define _FL_PIN_TABLE_H_
 
-#define _USE_SCOPES_ 1
+//#define _USE_SCOPES_ 1
 
 #include <cstdio>
 #include <cmath>
